@@ -1,3 +1,4 @@
+use crate::translation::{get_translation, Translation};
 use crate::args::{Args, ARGS};
 use crate::endpoints::errors::ErrorTemplate;
 use crate::pasta::Pasta;
@@ -5,7 +6,7 @@ use crate::util::animalnumbers::to_u64;
 use crate::util::hashids::to_u64 as hashid_to_u64;
 use crate::util::misc::{self, remove_expired};
 use crate::AppState;
-use actix_web::{get, web, HttpResponse};
+use actix_web::{get, web, HttpResponse, HttpRequest};
 use askama::Template;
 
 #[derive(Template)]
@@ -14,10 +15,11 @@ struct QRTemplate<'a> {
     qr: &'a String,
     pasta: &'a Pasta,
     args: &'a Args,
+    text: Translation,
 }
 
 #[get("/qr/{id}")]
-pub async fn getqr(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
+pub async fn getqr(req: HttpRequest, data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
     // get access to the pasta collection
     let mut pastas = data.pastas.lock().unwrap();
 
@@ -27,8 +29,10 @@ pub async fn getqr(data: web::Data<AppState>, id: web::Path<String>) -> HttpResp
         to_u64(&id).unwrap_or(0)
     };
 
-    // remove expired pastas (including this one if needed)
     remove_expired(&mut pastas);
+    
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
 
     // find the index of the pasta in the collection based on u64 id
     let mut index: usize = 0;
@@ -60,6 +64,7 @@ pub async fn getqr(data: web::Data<AppState>, id: web::Path<String>) -> HttpResp
                 qr: &svg,
                 pasta: &pastas[index],
                 args: &ARGS,
+                text,
             }
             .render()
             .unwrap(),
@@ -70,5 +75,5 @@ pub async fn getqr(data: web::Data<AppState>, id: web::Path<String>) -> HttpResp
     // send pasta not found error
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap())
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap())
 }

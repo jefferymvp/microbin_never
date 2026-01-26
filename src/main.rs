@@ -4,6 +4,7 @@ use crate::args::ARGS;
 use crate::endpoints::{
     admin, auth_admin, auth_upload, create, edit, errors, file, guide, list,
     pasta as pasta_endpoint, qr, remove, static_resources,
+    translation as translation_endpoint,
 };
 use crate::pasta::Pasta;
 use crate::util::db::read_all;
@@ -20,6 +21,7 @@ use std::sync::Mutex;
 
 pub mod args;
 pub mod pasta;
+pub mod translation;
 
 pub mod util {
     pub mod animalnumbers;
@@ -50,6 +52,7 @@ pub mod endpoints {
     pub mod qr;
     pub mod remove;
     pub mod static_resources;
+    pub mod translation;
 }
 
 pub struct AppState {
@@ -110,6 +113,7 @@ async fn main() -> std::io::Result<()> {
             .service(pasta_endpoint::postpasta)
             .service(pasta_endpoint::getshortpasta)
             .service(pasta_endpoint::postshortpasta)
+            .service(translation_endpoint::set_lang)
             .service(pasta_endpoint::getrawpasta)
             .service(pasta_endpoint::postrawpasta)
             .service(pasta_endpoint::redirecturl)

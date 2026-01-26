@@ -1,3 +1,4 @@
+use crate::translation::{get_translation, Translation};
 use crate::args::{Args, ARGS};
 use crate::endpoints::errors::ErrorTemplate;
 use crate::pasta::Pasta;
@@ -19,6 +20,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 struct PastaTemplate<'a> {
     pasta: &'a Pasta,
     args: &'a Args,
+    text: Translation,
 }
 
 fn pastaresponse(
@@ -26,6 +28,7 @@ fn pastaresponse(
     id: web::Path<String>,
     password: String,
     skip_increment: bool,
+    text: Translation,
 ) -> HttpResponse {
     // get access to the pasta collection
     let mut pastas = data.pastas.lock().unwrap();
@@ -92,6 +95,7 @@ fn pastaresponse(
             PastaTemplate {
                 pasta: &pastas[index],
                 args: &ARGS,
+                text,
             }
             .render()
             .unwrap(),
@@ -122,27 +126,33 @@ fn pastaresponse(
     // otherwise send pasta not found error
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap())
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap())
 }
 
 #[post("/upload/{id}")]
 pub async fn postpasta(
+    req: HttpRequest,
     data: web::Data<AppState>,
     id: web::Path<String>,
     payload: Multipart,
 ) -> Result<HttpResponse, Error> {
     let password = auth::password_from_multipart(payload).await?;
-    Ok(pastaresponse(data, id, password, false))
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+    Ok(pastaresponse(data, id, password, false, text))
 }
 
 #[post("/p/{id}")]
 pub async fn postshortpasta(
+    req: HttpRequest,
     data: web::Data<AppState>,
     id: web::Path<String>,
     payload: Multipart,
 ) -> Result<HttpResponse, Error> {
     let password = auth::password_from_multipart(payload).await?;
-    Ok(pastaresponse(data, id, password, false))
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+    Ok(pastaresponse(data, id, password, false, text))
 }
 
 #[get("/upload/{id}")]
@@ -163,7 +173,10 @@ pub async fn getpasta(
         }
     }
 
-    pastaresponse(data, id, String::from(""), skip_increment)
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+
+    pastaresponse(data, id, String::from(""), skip_increment, text)
 }
 
 // when creating a pasta, the owner is issued a token with a 15-second expiration
@@ -193,11 +206,13 @@ fn verify_owner_token(token: &str, id: &str) -> bool {
 }
 
 #[get("/p/{id}")]
-pub async fn getshortpasta(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
-    pastaresponse(data, id, String::from(""), false)
+pub async fn getshortpasta(req: HttpRequest, data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+    pastaresponse(data, id, String::from(""), false, text)
 }
 
-fn urlresponse(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
+fn urlresponse(data: web::Data<AppState>, id: web::Path<String>, text: Translation) -> HttpResponse {
     // get access to the pasta collection
     let mut pastas = data.pastas.lock().unwrap();
 
@@ -255,24 +270,28 @@ fn urlresponse(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse
         } else {
             HttpResponse::Ok()
                 .content_type("text/html; charset=utf-8")
-                .body(ErrorTemplate { args: &ARGS }.render().unwrap());
+                .body(ErrorTemplate { args: &ARGS, text: text.clone() }.render().unwrap());
         }
     }
 
     // otherwise send pasta not found error
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap())
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap())
 }
 
 #[get("/url/{id}")]
-pub async fn redirecturl(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
-    urlresponse(data, id)
+pub async fn redirecturl(req: HttpRequest, data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+    urlresponse(data, id, text)
 }
 
 #[get("/u/{id}")]
-pub async fn shortredirecturl(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
-    urlresponse(data, id)
+pub async fn shortredirecturl(req: HttpRequest, data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+    urlresponse(data, id, text)
 }
 
 #[get("/raw/{id}")]

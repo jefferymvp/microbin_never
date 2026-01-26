@@ -3,95 +3,95 @@
     <br>
     <div id="settings">
         <div>
-            <label for="expiration">Expiration <sup> <a href="{{ args.public_path_as_str() }}/guide#expiration">?</a></sup></label><br>
+            <label for="expiration">{{ text.expiration }} <sup> <a href="{{ args.public_path_as_str() }}/guide#expiration">?</a></sup></label><br>
             <select style="width: 100%;" name="expiration" id="expiration">
                 <optgroup label="Expire after">
                     {% if args.default_expiry == "1min" %}
                     <option selected value="1min">
                         {%- else %}
                     <option value="1min">
-                        {%- endif %} 1 minute
+                        {%- endif %} {{ text.expire_1min }}
                     </option>
                     {% if args.default_expiry == "10min" %}
                     <option selected value="10min">
                         {%- else %}
                     <option value="10min">
-                        {%- endif %} 10 minutes
+                        {%- endif %} {{ text.expire_10min }}
                     </option>
                     {% if args.default_expiry == "1hour" %}
                     <option selected value="1hour">
                         {%- else %}
                     <option value="1hour">
-                        {%- endif %} 1 hour
+                        {%- endif %} {{ text.expire_1hour }}
                     </option>
                     {% if args.default_expiry == "24hour" %}
                     <option selected value="24hour">
                         {%- else %}
                     <option value="24hour">
-                        {%- endif %} 24 hours
+                        {%- endif %} {{ text.expire_24hour }}
                     </option>
                     {% if args.default_expiry == "3days" %}
                     <option selected value="3days">
                         {%- else %}
                     <option value="3days">
-                        {%- endif %} 3 days
+                        {%- endif %} {{ text.expire_3days }}
                     </option>
                     {% if args.default_expiry == "1week" %}
                     <option selected value="1week">
                         {%- else %}
                     <option value="1week">
-                        {%- endif %} 1 week
+                        {%- endif %} {{ text.expire_1week }}
                     </option>
                 </optgroup>
                 {% if args.eternal_pasta %} {% if args.default_expiry ==
                 "never" %}
                 <option selected value="never">
                     {%- else %}
-                <option value="never">{%- endif %} Never Expire
+                <option value="never">{%- endif %} {{ text.expire_never }}
                 </option>
                 {%- endif %}
             </select>
         </div>
         {% if args.enable_burn_after %}
         <div>
-            <label for="burn_after">Burn After <sup> <a href="{{ args.public_path_as_str() }}/guide#burn-after">?</a></sup></label><br>
+            <label for="burn_after">{{ text.burn_after }} <sup> <a href="{{ args.public_path_as_str() }}/guide#burn-after">?</a></sup></label><br>
             <select style="width: 100%;" name="burn_after" id="burn_after">
                 {% if args.default_burn_after == 0 %}
                 <option selected value="0">
                     {%- else %}
                 <option value="0">
-                    {%- endif %} No Limit
+                    {%- endif %} {{ text.burn_no_limit }}
                 </option>
                 <optgroup label="Burn after">
                     {% if args.default_burn_after == 1 %}
                     <option selected value="1">
                         {%- else %}
                     <option value="1">
-                        {%- endif %} First Read
+                        {%- endif %} {{ text.burn_1 }}
                     </option>
                     {% if args.default_burn_after == 10 %}
                     <option selected value="10">
                         {%- else %}
                     <option value="10">
-                        {%- endif %} 10th Read
+                        {%- endif %} {{ text.burn_10 }}
                     </option>
                     {% if args.default_burn_after == 100 %}
                     <option selected value="100">
                         {%- else %}
                     <option value="100">
-                        {%- endif %} 100th Read
+                        {%- endif %} {{ text.burn_100 }}
                     </option>
                     {% if args.default_burn_after == 1000 %}
                     <option selected value="1000">
                         {%- else %}
                     <option value="1000">
-                        {%- endif %} 1000th Read
+                        {%- endif %} {{ text.burn_1000 }}
                     </option>
                     {% if args.default_burn_after == 10000 %}
                     <option selected value="10000">
                         {%- else %}
                     <option value="10000">
-                        {%- endif %} 10000th Read
+                        {%- endif %} {{ text.burn_10000 }}
                     </option>
                 </optgroup>
             </select>
@@ -100,7 +100,7 @@
 
         {% if args.highlightsyntax %}
         <div>
-            <label for="syntax_highlight">Syntax <sup> <a href="{{ args.public_path_as_str() }}/guide#syntax">?</a></sup></label><br>
+            <label for="syntax_highlight">{{ text.syntax_highlight }} <sup> <a href="{{ args.public_path_as_str() }}/guide#syntax">?</a></sup></label><br>
             <select style="width: 100%;" name="syntax_highlight" id="syntax_highlight">
                 <option value="none">None</option>
                 <optgroup label="Client-Rendered">
@@ -143,26 +143,26 @@
 
         {% if args.encryption_client_side || args.encryption_server_side || args.enable_readonly || args.private %}
         <div>
-            <label for="privacy">Privacy <sup> <a href="{{ args.public_path_as_str() }}/guide#privacy">?</a></sup></label><br>
+            <label for="privacy">{{ text.privacy }} <sup> <a href="{{ args.public_path_as_str() }}/guide#privacy">?</a></sup></label><br>
             <select style="width: 100%;" name="privacy" id="privacy">
                 <optgroup label="Unencrypted (no password)">
-                    <option value="public">Public</option>
+                    <option value="public">{{ text.privacy_public }}</option>
                     {% if args.private %}
-                    <option value="unlisted">Unlisted</option>
+                    <option value="unlisted">{{ text.privacy_unlisted }}</option>
                     {%- endif %}
                 </optgroup>
                 {% if args.enable_readonly %}
                 <optgroup label="Unencrypted (protected)">
-                    <option value="readonly">Read-only</option>
+                    <option value="readonly">{{ text.privacy_readonly }}</option>
                 </optgroup>
                 {%- endif %}
                 {% if args.encryption_client_side || args.encryption_server_side %}
                 <optgroup label="Encrypted">
                     {% if args.encryption_server_side %}
-                    <option value="private">Private</option>
+                    <option value="private">{{ text.privacy_private }}</option>
                     {%- endif %}
                     {% if args.encryption_client_side%}
-                    <option value="secret">Secret</option>
+                    <option value="secret">{{ text.privacy_secret }}</option>
                     {%- endif %}
                 </optgroup>
                 {%- endif %}
@@ -172,35 +172,34 @@
 
         {% if args.encryption_client_side || args.encryption_server_side || args.enable_readonly %}
         <div>
-            <label for="password_field">Password <sup><a href="{{ args.public_path_as_str() }}/guide#password">?</a></sup></label><br>
+            <label for="password_field">{{ text.password }} <sup><a href="{{ args.public_path_as_str() }}/guide#password">?</a></sup></label><br>
             <input style="width: 130px; height: 28px;" type="password" id="password_field" autocomplete="off" />
         </div>
         {%- endif %}
 
     </div>
 
-    <label>Content</label>
+    <label>{{ text.content_label }}</label>
     <textarea style="width: 100%; min-height: 100px; margin-bottom: 2em; font-family: monospace;" id="content-input"
-        autofocus placeholder="Type something here."></textarea>
+        autofocus placeholder="{{ text.content_placeholder }}"></textarea>
     <div>
         {% if !args.no_file_upload %}
         <div id="file-select">
-            <label for="file" id="attach-file-button-label"><a role="button" id="attach-file-button">Select or drop file
-                    attachment</a></label>
+            <label for="file" id="attach-file-button-label"><a role="button" id="attach-file-button">{{ text.select_file }}</a></label>
             <br>
             <input type="file" id="file" name="file" />
         </div>
         {% endif %}
         <b>
             <input style="width: 140px; float: right; background-color:
-            #2975D2; color: white;" id="submit-button" type="submit" value="Save" />
+            #2975D2; color: white;" id="submit-button" type="submit" value="{{ text.save_button }}" />
             {% if args.readonly %}
             {% if status == "incorrect" %}
             <input style="width: 160px; float: right; background-color: rgba(255, 0, 0, 0.137);" type="password"
-                id="uploader_password" name="uploader_password" placeholder="Incorrect password!" />
+                id="uploader_password" name="uploader_password" placeholder="{{ text.incorrect_password }}" />
             {% else %}
             <input style="width: 160px; float: right;" type="password" id="uploader_password" name="uploader_password"
-                placeholder="Uploader Password" />
+                placeholder="{{ text.uploader_password_placeholder }}" />
 
             {% endif %}
             {% endif %}

@@ -1,3 +1,4 @@
+use crate::translation::{get_translation, Translation};
 use crate::args::Args;
 use crate::endpoints::errors::ErrorTemplate;
 use crate::util::animalnumbers::to_u64;
@@ -7,7 +8,7 @@ use crate::util::misc::{decrypt, encrypt, remove_expired};
 use crate::{AppState, Pasta, ARGS};
 use actix_multipart::Multipart;
 use actix_web::error::ErrorBadRequest;
-use actix_web::{get, post, web, Error, HttpResponse};
+use actix_web::{get, post, web, Error, HttpResponse, HttpRequest};
 use askama::Template;
 use bytes::BytesMut;
 use futures::TryStreamExt;
@@ -19,10 +20,11 @@ struct EditTemplate<'a> {
     args: &'a Args,
     path: &'a String,
     status: &'a String,
+    text: Translation,
 }
 
 #[get("/edit/{id}")]
-pub async fn get_edit(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
+pub async fn get_edit(req: HttpRequest, data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
     let mut pastas = data.pastas.lock().unwrap();
 
     let id = if ARGS.hash_ids {
@@ -32,6 +34,9 @@ pub async fn get_edit(data: web::Data<AppState>, id: web::Path<String>) -> HttpR
     };
 
     remove_expired(&mut pastas);
+    
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
 
     for pasta in pastas.iter() {
         if pasta.id == id {
@@ -56,6 +61,7 @@ pub async fn get_edit(data: web::Data<AppState>, id: web::Path<String>) -> HttpR
                     args: &ARGS,
                     path: &String::from("edit"),
                     status: &String::from(""),
+                    text,
                 }
                 .render()
                 .unwrap(),
@@ -65,11 +71,12 @@ pub async fn get_edit(data: web::Data<AppState>, id: web::Path<String>) -> HttpR
 
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap())
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap())
 }
 
 #[get("/edit/{id}/{status}")]
 pub async fn get_edit_with_status(
+    req: HttpRequest,
     data: web::Data<AppState>,
     param: web::Path<(String, String)>,
 ) -> HttpResponse {
@@ -84,6 +91,9 @@ pub async fn get_edit_with_status(
     };
 
     remove_expired(&mut pastas);
+    
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
 
     for pasta in pastas.iter() {
         if pasta.id == intern_id {
@@ -108,6 +118,7 @@ pub async fn get_edit_with_status(
                     args: &ARGS,
                     path: &String::from("edit"),
                     status: &status,
+                    text,
                 }
                 .render()
                 .unwrap(),
@@ -117,11 +128,12 @@ pub async fn get_edit_with_status(
 
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap())
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap())
 }
 
 #[post("/edit_private/{id}")]
 pub async fn post_edit_private(
+    req: HttpRequest,
     data: web::Data<AppState>,
     id: web::Path<String>,
     mut payload: Multipart,
@@ -158,6 +170,9 @@ pub async fn post_edit_private(
             break;
         }
     }
+    
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
 
     if found && !pastas[index].encrypt_client {
         let original_content = pastas[index].content.to_owned();
@@ -192,6 +207,7 @@ pub async fn post_edit_private(
                 args: &ARGS,
                 path: &String::from("submit_edit_private"),
                 status: &String::from(""),
+                text,
             }
             .render()
             .unwrap(),
@@ -205,11 +221,12 @@ pub async fn post_edit_private(
     }
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap()))
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap()))
 }
 
 #[post("/submit_edit_private/{id}")]
 pub async fn post_submit_edit_private(
+    req: HttpRequest,
     data: web::Data<AppState>,
     id: web::Path<String>,
     mut payload: Multipart,
@@ -302,13 +319,18 @@ pub async fn post_submit_edit_private(
             ))
             .finish());
     }
+    
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+    
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap()))
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap()))
 }
 
 #[post("/edit/{id}")]
 pub async fn post_edit(
+    req: HttpRequest,
     data: web::Data<AppState>,
     id: web::Path<String>,
     mut payload: Multipart,
@@ -366,7 +388,7 @@ pub async fn post_edit(
                         return Ok(HttpResponse::Found()
                             .append_header((
                                 "Location",
-                                format!("{}/edit/{}/incorrect", ARGS.public_path_as_str(), pasta.id_as_animals()),
+                                    format!("{}/edit/{}/incorrect", ARGS.public_path_as_str(), pasta.id_as_animals()),
                             ))
                             .finish());
                     }
@@ -392,7 +414,10 @@ pub async fn post_edit(
         }
     }
 
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap()))
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap()))
 }

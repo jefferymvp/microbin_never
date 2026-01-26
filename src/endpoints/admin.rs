@@ -1,10 +1,11 @@
 use crate::args::{Args, ARGS};
 use crate::pasta::Pasta;
+use crate::translation::{get_translation, Translation};
 use crate::util::misc::remove_expired;
 use crate::util::version::{fetch_latest_version, Version, CURRENT_VERSION};
 use crate::AppState;
 use actix_multipart::Multipart;
-use actix_web::{get, post, web, Error, HttpResponse};
+use actix_web::{get, post, web, Error, HttpResponse, HttpRequest};
 use askama::Template;
 use futures::TryStreamExt;
 
@@ -17,6 +18,7 @@ struct AdminTemplate<'a> {
     version_string: &'a String,
     message: &'a String,
     update: &'a Option<Version>,
+    text: Translation,
 }
 
 #[get("/admin")]
@@ -28,6 +30,7 @@ pub async fn get_admin() -> Result<HttpResponse, Error> {
 
 #[post("/admin")]
 pub async fn post_admin(
+    req: HttpRequest,
     data: web::Data<AppState>,
     mut payload: Multipart,
 ) -> Result<HttpResponse, Error> {
@@ -91,6 +94,9 @@ pub async fn post_admin(
         update = None;
     }
 
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(
         AdminTemplate {
             pastas: &pastas,
@@ -99,6 +105,7 @@ pub async fn post_admin(
             version_string: &format!("{}", CURRENT_VERSION.long_title),
             message: &String::from(message),
             update: &update,
+            text,
         }
         .render()
         .unwrap(),

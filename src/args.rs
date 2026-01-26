@@ -97,13 +97,13 @@ pub struct Args {
     #[clap(long, env = "MICROBIN_QR")]
     pub qr: bool,
 
-    #[clap(long, env = "MICROBIN_ETERNAL_PASTA")]
+    #[clap(long, env = "MICROBIN_ETERNAL_PASTA", default_value_t = true)]
     pub eternal_pasta: bool,
 
     #[clap(long, env = "MICROBIN_ENABLE_READONLY")]
     pub enable_readonly: bool,
 
-    #[clap(long, env = "MICROBIN_DEFAULT_EXPIRY", default_value = "24hour")]
+    #[clap(long, env = "MICROBIN_DEFAULT_EXPIRY", default_value = "never")]
     pub default_expiry: String,
 
     #[clap(long, env = "MICROBIN_DATA_DIR", default_value = "microbin_data")]

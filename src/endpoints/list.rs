@@ -1,8 +1,9 @@
-use actix_web::{get, web, HttpResponse};
+use actix_web::{get, web, HttpResponse, HttpRequest};
 use askama::Template;
 
 use crate::args::{Args, ARGS};
 use crate::pasta::Pasta;
+use crate::translation::{get_translation, Translation};
 use crate::util::misc::remove_expired;
 use crate::AppState;
 
@@ -11,10 +12,11 @@ use crate::AppState;
 struct ListTemplate<'a> {
     pastas: &'a Vec<Pasta>,
     args: &'a Args,
+    text: Translation,
 }
 
 #[get("/list")]
-pub async fn list(data: web::Data<AppState>) -> HttpResponse {
+pub async fn list(req: HttpRequest, data: web::Data<AppState>) -> HttpResponse {
     if ARGS.no_listing {
         return HttpResponse::Found()
             .append_header(("Location", format!("{}/", ARGS.public_path_as_str())))
@@ -28,10 +30,14 @@ pub async fn list(data: web::Data<AppState>) -> HttpResponse {
     // sort pastas in reverse-chronological order of creation time
     pastas.sort_by(|a, b| b.created.cmp(&a.created));
 
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+
     HttpResponse::Ok().content_type("text/html; charset=utf-8").body(
         ListTemplate {
             pastas: &pastas,
             args: &ARGS,
+            text,
         }
         .render()
         .unwrap(),

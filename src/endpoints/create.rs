@@ -1,4 +1,5 @@
 use crate::pasta::PastaFile;
+use crate::translation::{get_translation, Translation};
 use crate::util::animalnumbers::to_animal_names;
 use crate::util::db::insert;
 use crate::util::hashids::to_hashids;
@@ -7,7 +8,7 @@ use crate::{AppState, Pasta, ARGS};
 use actix_multipart::Multipart;
 use actix_web::error::ErrorBadRequest;
 use actix_web::cookie::Cookie;
-use actix_web::{get, web, Error, HttpResponse, Responder};
+use actix_web::{get, web, Error, HttpResponse, Responder, HttpRequest};
 use askama::Template;
 use bytes::BytesMut;
 use bytesize::ByteSize;
@@ -22,14 +23,19 @@ use std::time::{SystemTime, UNIX_EPOCH};
 struct IndexTemplate<'a> {
     args: &'a ARGS,
     status: String,
+    text: Translation,
 }
 
 #[get("/")]
-pub async fn index() -> impl Responder {
+pub async fn index(req: HttpRequest) -> impl Responder {
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+
     HttpResponse::Ok().content_type("text/html; charset=utf-8").body(
         IndexTemplate {
             args: &ARGS,
             status: String::from(""),
+            text,
         }
         .render()
         .unwrap(),
@@ -37,13 +43,16 @@ pub async fn index() -> impl Responder {
 }
 
 #[get("/{status}")]
-pub async fn index_with_status(param: web::Path<String>) -> HttpResponse {
+pub async fn index_with_status(req: HttpRequest, param: web::Path<String>) -> HttpResponse {
     let status = param.into_inner();
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
 
     return HttpResponse::Ok().content_type("text/html; charset=utf-8").body(
         IndexTemplate {
             args: &ARGS,
             status,
+            text,
         }
         .render()
         .unwrap(),

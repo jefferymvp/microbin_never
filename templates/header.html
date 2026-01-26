@@ -45,15 +45,23 @@ padding-right:0.5rem; line-height: 1.5; font-size: 1.1em; padding-top: 2rem;">
             </b>
 
             <a href="{{ args.public_path_as_str() }}/" style="margin-right: 0.5rem;
-            margin-left: 0.5rem">New</a>
+            margin-left: 0.5rem">{{ text.upload_new }}</a>
 
             {% if !args.no_listing %}
-            <a href="{{ args.public_path_as_str() }}/list" style="margin-right: 0.5rem; margin-left: 0.5rem">List</a>
+            <a href="{{ args.public_path_as_str() }}/list" style="margin-right: 0.5rem; margin-left: 0.5rem">{{
+                text.list }}</a>
             {%- endif %}
 
             <a href="{{ args.public_path_as_str() }}/guide" style="margin-right: 0.5rem;
-            margin-left: 0.5rem">Guide</a>
+            margin-left: 0.5rem">{{ text.guide }}</a>
 
+            {% if text.current_lang == "EN" %}
+            <a href="{{ args.public_path_as_str() }}/set_lang/zh"
+                style="margin-right: 0.5rem; margin-left: 0.5rem; float: right;">{{ text.switch_lang }}</a>
+            {% else %}
+            <a href="{{ args.public_path_as_str() }}/set_lang/en"
+                style="margin-right: 0.5rem; margin-left: 0.5rem; float: right;">{{ text.switch_lang }}</a>
+            {% endif %}
 
         </div>
 

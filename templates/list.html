@@ -4,7 +4,7 @@
 {% if pastas.is_empty() %}
 <br>
 <p>
-    No uploads yet. 😔 Create one <a href="{{ args.public_path_as_str() }}/">here</a>.
+    {{ text.list_empty }} <a href="{{ args.public_path_as_str() }}/">{{ text.list_empty_link }}</a>.
 </p>
 <br>
 {%- else %}
@@ -17,18 +17,18 @@
             {% endif %}
             <thead>
                 <th style="width: 25%">
-                    Key
+                    {{ text.table_key }}
                 </th>
                 <th style="width: 10%">
                 </th>
                 <th style="width: 15%">
-                    Created
+                    {{ text.table_date }}
                 </th>
                 <th style="width: 15%">
-                    Expiration
+                    {{ text.table_expires }}
                 </th>
                 <th style="width: 15%">
-                    Contents
+                    {{ text.table_content }}
                 </th>
 
                 <th style="width: 10%">
@@ -48,10 +48,11 @@
                         {% if args.public_path_as_str() != "" %}
                         {% if args.short_path_as_str() == "" %}
                         <a style="margin-right:1rem; cursor: pointer;" class="copy-button" null
-                            data-url="{{ args.public_path_as_str()}}/upload/{{pasta.id_as_animals()}}">Copy</a>
+                            data-url="{{ args.public_path_as_str()}}/upload/{{pasta.id_as_animals()}}">{{ text.list_copy
+                            }}</a>
                         {% else %}
                         <a style="margin-right:1rem; cursor: pointer;" class="copy-button" data-url="{{ args.short_path_as_str()
-                        }}/p/{{pasta.id_as_animals()}}">Copy</a>
+                        }}/p/{{pasta.id_as_animals()}}">{{ text.list_copy }}</a>
                         {% endif %}
                         {%- endif %}
                     </td>
@@ -64,7 +65,7 @@
                     <td>
                         {% if pasta.content != "" %}
                         <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str()}}/raw/{{pasta.id_as_animals()}}">Text</a>
+                            href="{{ args.public_path_as_str()}}/raw/{{pasta.id_as_animals()}}">{{ text.list_text }}</a>
                         {%- endif %}
                         {% if pasta.file.is_some() %}
                         <a style="margin-right:1rem"
@@ -83,13 +84,13 @@
                     <td>
                         {% if pasta.editable %}
                         <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str() }}/edit/{{pasta.id_as_animals()}}">Edit</a>
+                            href="{{ args.public_path_as_str() }}/edit/{{pasta.id_as_animals()}}">{{ text.list_edit
+                            }}</a>
                         {%- endif %}
                     </td>
                     <td>
-                        {% if pasta.editable || pasta.readonly || pasta.encrypt_server %}
-                        <a href="{{ args.public_path_as_str() }}/remove/{{pasta.id_as_animals()}}">Remove</a>
-                        {%- endif %}
+                        <a href="{{ args.public_path_as_str() }}/remove/{{pasta.id_as_animals()}}">{{ text.list_remove
+                            }}</a>
                     </td>
                 </tr>
                 {%- endif %}
@@ -105,15 +106,15 @@
                 {% endif %}
                 <thead>
                     <th style=" width: 25%">
-                        Key
+                        {{ text.table_key }}
                     </th>
                     <th style="width: 10%">
                     </th>
                     <th style="width: 15%">
-                        Created
+                        {{ text.table_date }}
                     </th>
                     <th style="width: 15%">
-                        Expiration
+                        {{ text.table_expires }}
                     </th>
                     <th style="width: 15%">
                     </th>
@@ -132,10 +133,11 @@
                     <td>
                         {% if args.short_path_as_str() == "" %}
                         <a style="margin-right:1rem; cursor: pointer;" class="copy-button"
-                            data-url="{{ args.public_path_as_str()                    }}/url/{{pasta.id_as_animals()}}">Copy</a>
+                            data-url="{{ args.public_path_as_str()                    }}/url/{{pasta.id_as_animals()}}">{{
+                            text.list_copy }}</a>
                         {% else %}
                         <a style="margin-right:1rem; cursor: pointer;" class="copy-button" data-url="{{ args.short_path_as_str()
-                        }}/u/{{pasta.id_as_animals()}}">Copy</a>
+                        }}/u/{{pasta.id_as_animals()}}">{{ text.list_copy }}</a>
                         {% endif %}
                     </td>
                     <td>
@@ -146,18 +148,19 @@
                     </td>
                     <td>
                         <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str() }}/url/{{pasta.id_as_animals()}}">Redirect</a>
+                            href="{{ args.public_path_as_str() }}/url/{{pasta.id_as_animals()}}">{{ text.list_redirect
+                            }}</a>
                     </td>
                     <td>
                         {% if pasta.editable %}
                         <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str() }}/edit/{{pasta.id_as_animals()}}">Edit</a>
+                            href="{{ args.public_path_as_str() }}/edit/{{pasta.id_as_animals()}}">{{ text.list_edit
+                            }}</a>
                         {%- endif %}
                     </td>
                     <td>
-                        {% if pasta.editable || pasta.readonly || pasta.encrypt_server %}
-                        <a href="{{ args.public_path_as_str() }}/remove/{{pasta.id_as_animals()}}">Remove</a>
-                        {%- endif %}
+                        <a href="{{ args.public_path_as_str() }}/remove/{{pasta.id_as_animals()}}">{{ text.list_remove
+                            }}</a>
                     </td>
                 </tr>
                 {%- endif %}
@@ -175,9 +178,9 @@
         copyURLBtns.item(i).addEventListener("click", event => {
             event.srcElement
             navigator.clipboard.writeText(event.srcElement.getAttribute("data-url"))
-            event.srcElement.innerHTML = "Copied"
+            event.srcElement.innerHTML = "{{ text.view_copied }}"
             setTimeout(() => {
-                event.srcElement.innerHTML = "Copy"
+                event.srcElement.innerHTML = "{{ text.list_copy }}"
             }, 1000)
         })
     }

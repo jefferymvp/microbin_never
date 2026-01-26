@@ -1,5 +1,5 @@
 use actix_multipart::Multipart;
-use actix_web::{get, post, web, Error, HttpResponse};
+use actix_web::{get, post, web, Error, HttpResponse, HttpRequest};
 
 use crate::args::ARGS;
 use crate::endpoints::errors::ErrorTemplate;
@@ -8,13 +8,14 @@ use crate::util::animalnumbers::to_u64;
 use crate::util::auth;
 use crate::util::db::delete;
 use crate::util::hashids::to_u64 as hashid_to_u64;
-use crate::util::misc::{decrypt, remove_expired};
+use crate::util::misc::remove_expired;
+use crate::translation::get_translation;
 use crate::AppState;
 use askama::Template;
 use std::fs;
 
 #[get("/remove/{id}")]
-pub async fn remove(data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
+pub async fn remove(req: HttpRequest, data: web::Data<AppState>, id: web::Path<String>) -> HttpResponse {
     let mut pastas = data.pastas.lock().unwrap();
 
     let id = if ARGS.hash_ids {
@@ -73,14 +74,18 @@ pub async fn remove(data: web::Data<AppState>, id: web::Path<String>) -> HttpRes
     }
 
     remove_expired(&mut pastas);
+    
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
 
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap())
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap())
 }
 
 #[post("/remove/{id}")]
 pub async fn post_remove(
+    req: HttpRequest,
     data: web::Data<AppState>,
     id: web::Path<String>,
     payload: Multipart,
@@ -96,36 +101,22 @@ pub async fn post_remove(
     remove_expired(&mut pastas);
 
     let password = auth::password_from_multipart(payload).await?;
+    
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
 
     for (i, pasta) in pastas.iter().enumerate() {
         if pasta.id == id {
             if pastas[i].readonly || pastas[i].encrypt_server || !pastas[i].editable {
                 if password != *"" {
-                    let mut is_password_correct = false;
+                    let mut is_confirmed = false;
 
-                    if password == ARGS.auth_admin_password {
-                        is_password_correct = true;
+                    // Check if user typed the correct confirmation word
+                    if password.trim() == text.remove_confirm_word {
+                        is_confirmed = true;
                     }
 
-                    // if it is read-only, the content is not encrypted, but the key is
-                    if !is_password_correct && pastas[i].readonly {
-                        if let Some(ref encrypted_key) = pastas[i].encrypted_key {
-                            let res = decrypt(encrypted_key, &password);
-                            if let Ok(decrypted_key) = res {
-                                if decrypted_key == id.to_string() {
-                                    is_password_correct = true;
-                                }
-                            }
-                        }
-                    } else if !is_password_correct && pastas[i].encrypt_server {
-                        // if it is not read-only, the content is encrypted
-                        let res = decrypt(pastas[i].content.to_owned().as_str(), &password);
-                        if res.is_ok() {
-                            is_password_correct = true;
-                        }
-                    }
-
-                    if is_password_correct {
+                    if is_confirmed {
                         // remove the file itself
                         if let Some(PastaFile { name, .. }) = &pasta.file {
                             if fs::remove_file(format!(
@@ -193,7 +184,10 @@ pub async fn post_remove(
         }
     }
 
+    let lang = req.cookie("lang").map(|c| c.value().to_string()).unwrap_or_else(|| "zh".to_string());
+    let text = get_translation(&lang);
+    
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(ErrorTemplate { args: &ARGS }.render().unwrap()))
+        .body(ErrorTemplate { args: &ARGS, text }.render().unwrap()))
 }

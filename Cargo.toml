@@ -58,7 +58,8 @@ features = ["vendored"]
 optional = true
 
 [features]
-default = ["__default-tls", "__zstd", "__syntect-fast", "dep:rusqlite"]
+default = ["__rustcrypto-tls", "__zstd", "__syntect-rust", "dep:rusqlite"]
+sqlite = ["dep:rusqlite"]
 no-c-deps = ["__rustcrypto-tls", "__syntect-rust"]
 
 __default-tls = ["reqwest/default-tls", "dep:openssl"]

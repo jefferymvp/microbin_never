@@ -3,24 +3,27 @@
   {% if pasta.content != "" %}
   <button id="copy-text-button" class="small-button" style="margin-right:
   0.5rem">
-    Copy Text
+    {{ text.view_copy_text }}
   </button>
 
   {% if args.public_path_as_str() != "" && pasta.pasta_type == "url" %}
   <button id="copy-redirect-button" class="small-button" style="margin-right:
   0.5rem">
-    Copy Redirect
+    {{ text.view_copy_redirect }}
   </button>
   {%- endif %}
-  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/raw/{{pasta.id_as_animals()}}">Raw Text
-    Content</a>
+  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/raw/{{pasta.id_as_animals()}}">{{ text.view_raw
+    }}</a>
   {%- endif %} {% if args.qr && args.public_path_as_str() != "" %}
-  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/qr/{{pasta.id_as_animals()}}">QR</a>
+  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/qr/{{pasta.id_as_animals()}}">{{ text.view_qr
+    }}</a>
   {%- endif %} {% if pasta.editable && !pasta.encrypt_client %}
-  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/edit/{{pasta.id_as_animals()}}">Edit</a>
+  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/edit/{{pasta.id_as_animals()}}">{{ text.view_edit
+    }}</a>
   {%- endif %}
   {% if pasta.editable %}
-  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/remove/{{pasta.id_as_animals()}}">Remove</a>
+  <a style="margin-right: 1rem" href="{{ args.public_path_as_str()  }}/remove/{{pasta.id_as_animals()}}">{{
+    text.view_remove }}</a>
   {%- endif %}
 </div>
 <div style="float: right">
@@ -28,7 +31,7 @@
     href="{{ args.public_path_as_str()  }}/upload/{{pasta.id_as_animals()}}"><i>{{pasta.id_as_animals()}}</i></a>
   {% if args.public_path_as_str() != "" %}
   <button id="copy-url-button" class="small-button" style="margin-right: 0">
-    Copy URL
+    {{ text.view_copy_url }}
   </button>
   {%- endif %}
 </div>
@@ -41,15 +44,15 @@ justify-content: center; align-items: center;">
   <div id="decryption">
     {% if pasta.encrypt_client %}
     <label for="password-field" style="margin-bottom: 0.5em;">
-      Please enter your key to decrypt this upload. <sup> <a href="{{ args.public_path_as_str() }}/guide#encryption">?</a></sup>
+      {{ text.view_decrypt_prompt }} <sup> <a href="{{ args.public_path_as_str() }}/guide#encryption">?</a></sup>
     </label>
-    <input class="small-button" placeholder="Key" style="margin-right: 0.5rem" type="password" id="password-field"
-      autocomplete="off" />
+    <input class="small-button" placeholder="{{ text.table_key }}" style="margin-right: 0.5rem" type="password"
+      id="password-field" autocomplete="off" />
     {% if pasta.content != "" %}
     <button class="small-button" id="decrypt-button" style="margin-right:
     0.5rem">
       <b>
-        Decrypt text
+        {{ text.view_decrypt_button }}
       </b>
     </button>
     {%- endif %}
@@ -58,7 +61,7 @@ justify-content: center; align-items: center;">
     <button class="small-button" id="download-button" style="margin-right:
   0.5rem">
       <b>
-        Download {{pasta.file.as_ref().unwrap().name()}}
+        {{ text.view_download }} {{pasta.file.as_ref().unwrap().name()}}
         [{{pasta.file.as_ref().unwrap().size}}]
       </b>
     </button>
@@ -90,7 +93,7 @@ justify-content: center; align-items: center;">
     [{{pasta.file.as_ref().unwrap().size}}]</p>
   <a href="{{ args.public_path_as_str()}}/file/{{pasta.id_as_animals()}}" id="download-link">
     <button class="download-button" autofocus>
-      Download
+      {{ text.view_download }}
     </button>
   </a>
 </span>
@@ -99,14 +102,15 @@ justify-content: center; align-items: center;">
 
 {% if pasta.file.is_some() && pasta.file.as_ref().unwrap().is_image() &&
 pasta.file_embeddable() && !pasta.encrypt_client %}
-<img id="embed" src="{{ args.public_path_as_str()}}/file/{{pasta.id_as_animals()}}" style="max-height: 50vh; max-width: 100%; height: auto; width: auto;" />
+<img id="embed" src="{{ args.public_path_as_str()}}/file/{{pasta.id_as_animals()}}"
+  style="max-height: 50vh; max-width: 100%; height: auto; width: auto;" />
 <span style="margin-left: auto; margin-right: auto; display: flex;
   justify-content: center; align-items: center;">
   <p style="font-size: small;">{{pasta.file.as_ref().unwrap().name()}}
     [{{pasta.file.as_ref().unwrap().size}}]</p>
   <a href="{{ args.public_path_as_str()      }}/file/{{pasta.id_as_animals()}}" id="download-link" download>
     <button class="download-button" autofocus>
-      Download
+      {{ text.view_download }}
     </button>
   </a>
 </span>
@@ -122,7 +126,7 @@ pasta.file_embeddable() && !pasta.encrypt_client %}
     [{{pasta.file.as_ref().unwrap().size}}]</p>
   <a href="{{ args.public_path_as_str()      }}/file/{{pasta.id_as_animals()}}" download id="download-link">
     <button class="download-button">
-      Download
+      {{ text.view_download }}
     </button>
   </a>
 </span>
@@ -130,10 +134,10 @@ pasta.file_embeddable() && !pasta.encrypt_client %}
 
 <div>
   {% if args.show_read_stats %} {% if pasta.read_count == 1 %}
-  <p style="font-size: small">Read {{pasta.read_count}} time, last
+  <p style="font-size: small">{{ text.view_read }} {{pasta.read_count}} time, {{ text.view_last }}
     {{pasta.last_read_time_ago_as_string()}}</p>
   {%- else %}
-  <p style="font-size: small">Read {{pasta.read_count}} times, last
+  <p style="font-size: small">{{ text.view_read }} {{pasta.read_count}} times, {{ text.view_last }}
     {{pasta.last_read_time_ago_as_string()}}</p>
   {%- endif %} {%- endif %}
 
@@ -181,13 +185,13 @@ pasta.file_embeddable() && !pasta.encrypt_client %}
   function fallbackCopyTextToClipboard(text, buttonElement, originalLabel) {
     var textArea = document.createElement("textarea");
     textArea.value = text;
-    
+
     // Ensure it's not visible but part of the DOM
     textArea.style.position = "fixed";
     textArea.style.left = "-9999px";
     textArea.style.top = "0";
     document.body.appendChild(textArea);
-    
+
     textArea.focus();
     textArea.select();
 
@@ -206,7 +210,7 @@ pasta.file_embeddable() && !pasta.encrypt_client %}
   }
 
   function showCopiedFeedback(buttonElement, originalLabel) {
-    buttonElement.innerHTML = "Copied";
+    buttonElement.innerHTML = "{{ text.view_copied }}";
     setTimeout(() => {
       buttonElement.innerHTML = originalLabel;
     }, 1000);
@@ -235,22 +239,22 @@ pasta.file_embeddable() && !pasta.encrypt_client %}
 
   if (copyURLBtn) {
     copyURLBtn.addEventListener("click", () => {
-      copyToClipboard(url, copyURLBtn, "Copy URL");
+      copyToClipboard(url, copyURLBtn, "{{ text.view_copy_url }}");
     })
   }
   if (copyRedirectBtn) {
     copyRedirectBtn.addEventListener("click", () => {
-      copyToClipboard(redirect_url, copyRedirectBtn, "Copy Redirect");
+      copyToClipboard(redirect_url, copyRedirectBtn, "{{ text.view_copy_redirect }}");
     })
   }
 
   if (copyTextBtn) {
     copyTextBtn.addEventListener("click", () => {
       const decodeContent = decodeEntity(content)
-      copyToClipboard(decodeContent, copyTextBtn, "Copy Text");
+      copyToClipboard(decodeContent, copyTextBtn, "{{ text.view_copy_text }}");
     })
   }
-  
+
   // {% if pasta.encrypt_client %}
 
   const decryptDiv = document.getElementById('decryption');
@@ -344,7 +348,7 @@ pasta.file_embeddable() && !pasta.encrypt_client %}
     const decryptedBytes = aesCtr.decrypt(encryptedBytes);
     return decryptedBytes;
   }
-// {% endif %}
+  // {% endif %}
 </script>
 
 <style>

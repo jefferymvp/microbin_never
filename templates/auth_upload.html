@@ -2,7 +2,8 @@
 
 {% if encrypt_client %}
 
-<form id="auth-form" method="POST" action="{{ args.public_path_as_str() }}/{{path}}/{{id}}" enctype="multipart/form-data">
+<form id="auth-form" method="POST" action="{{ args.public_path_as_str() }}/{{path}}/{{id}}"
+  enctype="multipart/form-data">
   {% if status == "success" %}
   <b>
     Success!
@@ -60,21 +61,34 @@
 
 {% else %}
 
-<form id="auth-form" method="POST" action="{{ args.public_path_as_str() }}/{{path}}/{{id}}" enctype="multipart/form-data">
+<form id="auth-form" method="POST" action="{{ args.public_path_as_str() }}/{{path}}/{{id}}"
+  enctype="multipart/form-data">
   {% if status == "success" %}
   <b>
     Success!
   </b> <br>
   {% endif %}
+
+  {% if path == "remove" %}
+  <label for="password" style="margin-bottom: 0.5rem;">{{ text.remove_confirm_prompt }}</label>
+  <input id="password-field" placeholder="{{ text.remove_confirm_placeholder }}" name="password" type="text"
+    autocomplete="off" />
+  <button>{{ text.remove_confirm_button }}</button>
+  {% else %}
   <label for="password" style="margin-bottom: 0.5rem;"> Please enter the
     password to access or modify this upload. <sup>
-      <a href="{{ args.public_path_as_str() }}/guide#encryption">?</a></sup></label>
+      <a href="{{ args.public_path_as_str() }}/guide#encryption">?</a></sup> </label>
   <input id="password-field" placeholder="Password" name="password" type="password" autocomplete="off" />
   <button>Okay</button>
+  {% endif %}
 
   {% if status == "incorrect" %}
   <b>
+    {% if path == "remove" %}
+    {{ text.remove_incorrect }}
+    {% else %}
     Incorrect password.
+    {% endif %}
   </b>
   {% endif %}
 </form>

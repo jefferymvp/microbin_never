@@ -1,0 +1,290 @@
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Translation {
+    // Header & Footer
+    pub title: String,
+    pub upload_new: String,
+    pub list: String,
+    pub admin: String,
+    pub guide: String,
+    pub current_lang: String,
+    pub switch_lang: String,
+    pub footer_text: String,
+    
+    // Table Headers
+    pub table_file: String,
+    pub table_date: String,
+    pub table_size: String,
+    pub table_hits: String,
+    pub table_expires: String,
+    pub table_ip: String,
+    pub table_actions: String,
+    pub table_key: String,
+    pub table_content: String,
+    pub table_valid: String,
+    pub table_encryption: String,
+    pub table_privacy: String,
+    pub table_editable: String,
+    
+    // Error Page
+    pub error_404: String,
+    pub go_home: String,
+    
+    // View Page
+    pub view_copy_text: String,
+    pub view_copy_redirect: String,
+    pub view_raw: String,
+    pub view_qr: String,
+    pub view_edit: String,
+    pub view_remove: String,
+    pub view_copy_url: String,
+    pub view_decrypt_prompt: String,
+    pub view_decrypt_button: String,
+    pub view_download: String,
+    pub view_read: String,
+    pub view_last: String,
+    pub view_copied: String,
+    
+    // List Page
+    pub list_copy: String,
+    pub list_edit: String,
+    pub list_remove: String,
+    pub list_text: String,
+    pub list_redirect: String,
+    pub list_empty: String,
+    pub list_empty_link: String,
+    
+    // Remove/Delete Confirmation
+    pub remove_confirm_prompt: String,
+    pub remove_confirm_placeholder: String,
+    pub remove_confirm_button: String,
+pub remove_confirm_word: String,
+    pub remove_incorrect: String,
+    
+    // Index / Upload Form
+    pub expiration: String,
+    pub burn_after: String,
+    pub syntax_highlight: String,
+    pub privacy: String,
+    pub password: String,
+    pub content_label: String,
+    pub content_placeholder: String,
+    pub select_file: String,
+    pub save_button: String,
+    pub uploader_password_placeholder: String,
+    pub incorrect_password: String,
+    
+    // Dropdowns
+    pub expire_1min: String,
+    pub expire_10min: String,
+    pub expire_1hour: String,
+    pub expire_24hour: String,
+    pub expire_3days: String,
+    pub expire_1week: String,
+    pub expire_never: String,
+    
+    pub burn_no_limit: String,
+    pub burn_1: String,
+    pub burn_10: String,
+    pub burn_100: String,
+    pub burn_1000: String,
+    pub burn_10000: String,
+    
+    pub privacy_public: String,
+    pub privacy_unlisted: String,
+    pub privacy_readonly: String,
+    pub privacy_private: String,
+    pub privacy_secret: String,
+}
+
+impl Translation {
+    pub fn en() -> Self {
+        Self {
+            title: "MicroBin".to_string(),
+            upload_new: "Upload New".to_string(),
+            list: "List".to_string(),
+            admin: "Admin".to_string(),
+            guide: "Guide".to_string(),
+            current_lang: "EN".to_string(),
+            switch_lang: "中文".to_string(),
+            footer_text: "Powered by MicroBin".to_string(),
+            
+            table_file: "Filename".to_string(),
+            table_date: "Date".to_string(),
+            table_size: "Size".to_string(),
+            table_hits: "Hits".to_string(),
+            table_expires: "Expires".to_string(),
+            table_ip: "IP".to_string(),
+            table_actions: "Actions".to_string(),
+            table_key: "Key".to_string(),
+            table_content: "Content".to_string(),
+            table_valid: "Valid".to_string(),
+            table_encryption: "Encryption".to_string(),
+            table_privacy: "Priv.".to_string(),
+            table_editable: "Edit.".to_string(),
+            
+            error_404: "Not Found".to_string(),
+            go_home: "Go Home".to_string(),
+            
+            view_copy_text: "Copy Text".to_string(),
+            view_copy_redirect: "Copy Redirect".to_string(),
+            view_raw: "Raw Text".to_string(),
+            view_qr: "QR".to_string(),
+            view_edit: "Edit".to_string(),
+            view_remove: "Remove".to_string(),
+            view_copy_url: "Copy URL".to_string(),
+            view_decrypt_prompt: "Please enter your key to decrypt this upload.".to_string(),
+            view_decrypt_button: "Decrypt text".to_string(),
+            view_download: "Download".to_string(),
+            view_read: "Read".to_string(),
+            view_last: "last".to_string(),
+            view_copied: "Copied".to_string(),
+            
+            list_copy: "Copy".to_string(),
+            list_edit: "Edit".to_string(),
+            list_remove: "Remove".to_string(),
+            list_text: "Text".to_string(),
+            list_redirect: "Redirect".to_string(),
+            list_empty: "No uploads yet. 😔 Create one".to_string(),
+            list_empty_link: "here".to_string(),
+            
+            remove_confirm_prompt: "Please type \"confirm\" to delete this upload.".to_string(),
+            remove_confirm_placeholder: "Type \"confirm\"".to_string(),
+            remove_confirm_button: "Delete".to_string(),
+            remove_confirm_word: "confirm".to_string(),
+            remove_incorrect: "Incorrect. Please type \"confirm\" to delete.".to_string(),
+            
+            expiration: "Expiration".to_string(),
+            burn_after: "Burn After".to_string(),
+            syntax_highlight: "Syntax".to_string(),
+            privacy: "Privacy".to_string(),
+            password: "Password".to_string(),
+            content_label: "Content".to_string(),
+            content_placeholder: "Type something here.".to_string(),
+            select_file: "Select or drop file attachment".to_string(),
+            save_button: "Save".to_string(),
+            uploader_password_placeholder: "Uploader Password".to_string(),
+            incorrect_password: "Incorrect password!".to_string(),
+            
+            expire_1min: "1 minute".to_string(),
+            expire_10min: "10 minutes".to_string(),
+            expire_1hour: "1 hour".to_string(),
+            expire_24hour: "24 hours".to_string(),
+            expire_3days: "3 days".to_string(),
+            expire_1week: "1 week".to_string(),
+            expire_never: "Never Expire".to_string(),
+            
+            burn_no_limit: "No Limit".to_string(),
+            burn_1: "First Read".to_string(),
+            burn_10: "10th Read".to_string(),
+            burn_100: "100th Read".to_string(),
+            burn_1000: "1000th Read".to_string(),
+            burn_10000: "10000th Read".to_string(),
+            
+            privacy_public: "Public".to_string(),
+            privacy_unlisted: "Unlisted".to_string(),
+            privacy_readonly: "Read-only".to_string(),
+            privacy_private: "Private".to_string(),
+            privacy_secret: "Secret".to_string(),
+        }
+    }
+
+    pub fn zh() -> Self {
+        Self {
+            title: "MicroBin".to_string(),
+            upload_new: "新建上传".to_string(),
+            list: "列表".to_string(),
+            admin: "管理".to_string(),
+            guide: "指南".to_string(),
+            current_lang: "中文".to_string(),
+            switch_lang: "English".to_string(),
+            footer_text: "由 MicroBin 驱动".to_string(),
+            
+            table_file: "文件名".to_string(),
+            table_date: "日期".to_string(),
+            table_size: "大小".to_string(),
+            table_hits: "点击".to_string(),
+            table_expires: "过期".to_string(),
+            table_ip: "IP".to_string(),
+            table_actions: "操作".to_string(),
+            table_key: "键值".to_string(),
+            table_content: "内容".to_string(),
+            table_valid: "有效".to_string(),
+            table_encryption: "加密".to_string(),
+            table_privacy: "隐私".to_string(),
+            table_editable: "编辑".to_string(),
+            
+            error_404: "未找到页面".to_string(),
+            go_home: "返回首页".to_string(),
+            
+            view_copy_text: "复制文本".to_string(),
+            view_copy_redirect: "复制跳转".to_string(),
+            view_raw: "原始内容".to_string(),
+            view_qr: "二维码".to_string(),
+            view_edit: "编辑".to_string(),
+            view_remove: "删除".to_string(),
+            view_copy_url: "复制链接".to_string(),
+            view_decrypt_prompt: "请输入密钥以解密内容。".to_string(),
+            view_decrypt_button: "解密文本".to_string(),
+            view_download: "下载".to_string(),
+            view_read: "阅读".to_string(),
+            view_last: "上次".to_string(),
+            view_copied: "已复制".to_string(),
+            
+            list_copy: "复制".to_string(),
+            list_edit: "编辑".to_string(),
+            list_remove: "删除".to_string(),
+            list_text: "文本".to_string(),
+            list_redirect: "跳转".to_string(),
+            list_empty: "还没有上传内容。😔 在这里创建一个".to_string(),
+            list_empty_link: "点击这里".to_string(),
+            
+            remove_confirm_prompt: "请输入\"确认\"以删除此上传。".to_string(),
+            remove_confirm_placeholder: "输入\"确认\"".to_string(),
+            remove_confirm_button: "删除".to_string(),
+            remove_confirm_word: "确认".to_string(),
+            remove_incorrect: "输入错误。请输入\"确认\"以删除。".to_string(),
+            
+            expiration: "过期时间".to_string(),
+            burn_after: "阅后即焚".to_string(),
+            syntax_highlight: "语法高亮".to_string(),
+            privacy: "隐私设置".to_string(),
+            password: "密码保护".to_string(),
+            content_label: "已发布内容".to_string(),
+            content_placeholder: "在此输入内容...".to_string(),
+            select_file: "选择或拖放文件附件".to_string(),
+            save_button: "保存".to_string(),
+            uploader_password_placeholder: "上传者密码".to_string(),
+            incorrect_password: "密码错误!".to_string(),
+            
+            expire_1min: "1 分钟".to_string(),
+            expire_10min: "10 分钟".to_string(),
+            expire_1hour: "1 小时".to_string(),
+            expire_24hour: "24 小时".to_string(),
+            expire_3days: "3 天".to_string(),
+            expire_1week: "1 周".to_string(),
+            expire_never: "永不过期".to_string(),
+            
+            burn_no_limit: "无限制".to_string(),
+            burn_1: "阅读 1 次后".to_string(),
+            burn_10: "阅读 10 次后".to_string(),
+            burn_100: "阅读 100 次后".to_string(),
+            burn_1000: "阅读 1000 次后".to_string(),
+            burn_10000: "阅读 10000 次后".to_string(),
+            
+            privacy_public: "公开".to_string(),
+            privacy_unlisted: "未列出 (Unlisted)".to_string(),
+            privacy_readonly: "只读".to_string(),
+            privacy_private: "私有 (Private)".to_string(),
+            privacy_secret: "加密 (Secret)".to_string(),
+        }
+    }
+}
+
+pub fn get_translation(lang: &str) -> Translation {
+    match lang {
+        "zh" => Translation::zh(),
+        _ => Translation::en(),
+    }
+}
