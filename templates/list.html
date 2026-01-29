@@ -27,8 +27,8 @@
                 <th style="width: 15%">
                     {{ text.table_expires }}
                 </th>
-                <th style="width: 15%">
-                    {{ text.table_content }}
+                <th style="width: 25%">
+                    {{ text.table_title }}
                 </th>
 
                 <th style="width: 10%">
@@ -63,22 +63,7 @@
                         {{pasta.expiration_as_string()}}
                     </td>
                     <td>
-                        {% if pasta.content != "" %}
-                        <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str()}}/raw/{{pasta.id_as_animals()}}">{{ text.list_text }}</a>
-                        {%- endif %}
-                        {% if pasta.file.is_some() %}
-                        <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str() }}/file/{{pasta.id_as_animals()}}">
-                            {% if pasta.file.as_ref().unwrap().is_image() %}
-                            Image
-                            {%- else if pasta.file.as_ref().unwrap().is_video() %}
-                            Video
-                            {%- else %}
-                            File
-                            {%- endif %}
-                        </a>
-                        {%- endif %}
+                        {{pasta.title}}
                     </td>
 
                     <td>
@@ -116,7 +101,8 @@
                     <th style="width: 15%">
                         {{ text.table_expires }}
                     </th>
-                    <th style="width: 15%">
+                    <th style="width: 25%">
+                        {{ text.table_title }}
                     </th>
                     <th style="width: 10%">
                     </th>
@@ -147,9 +133,7 @@
                         {{pasta.expiration_as_string()}}
                     </td>
                     <td>
-                        <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str() }}/url/{{pasta.id_as_animals()}}">{{ text.list_redirect
-                            }}</a>
+                        {{pasta.title}}
                     </td>
                     <td>
                         {% if pasta.editable %}

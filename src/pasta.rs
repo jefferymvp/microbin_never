@@ -56,6 +56,8 @@ impl PastaFile {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Pasta {
     pub id: u64,
+    #[serde(default)]
+    pub title: String,
     pub content: String,
     pub file: Option<PastaFile>,
     pub extension: String,

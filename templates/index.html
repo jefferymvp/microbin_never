@@ -3,7 +3,8 @@
     <br>
     <div id="settings">
         <div>
-            <label for="expiration">{{ text.expiration }} <sup> <a href="{{ args.public_path_as_str() }}/guide#expiration">?</a></sup></label><br>
+            <label for="expiration">{{ text.expiration }} <sup> <a
+                        href="{{ args.public_path_as_str() }}/guide#expiration">?</a></sup></label><br>
             <select style="width: 100%;" name="expiration" id="expiration">
                 <optgroup label="Expire after">
                     {% if args.default_expiry == "1min" %}
@@ -54,7 +55,8 @@
         </div>
         {% if args.enable_burn_after %}
         <div>
-            <label for="burn_after">{{ text.burn_after }} <sup> <a href="{{ args.public_path_as_str() }}/guide#burn-after">?</a></sup></label><br>
+            <label for="burn_after">{{ text.burn_after }} <sup> <a
+                        href="{{ args.public_path_as_str() }}/guide#burn-after">?</a></sup></label><br>
             <select style="width: 100%;" name="burn_after" id="burn_after">
                 {% if args.default_burn_after == 0 %}
                 <option selected value="0">
@@ -100,7 +102,8 @@
 
         {% if args.highlightsyntax %}
         <div>
-            <label for="syntax_highlight">{{ text.syntax_highlight }} <sup> <a href="{{ args.public_path_as_str() }}/guide#syntax">?</a></sup></label><br>
+            <label for="syntax_highlight">{{ text.syntax_highlight }} <sup> <a
+                        href="{{ args.public_path_as_str() }}/guide#syntax">?</a></sup></label><br>
             <select style="width: 100%;" name="syntax_highlight" id="syntax_highlight">
                 <option value="none">None</option>
                 <optgroup label="Client-Rendered">
@@ -143,7 +146,8 @@
 
         {% if args.encryption_client_side || args.encryption_server_side || args.enable_readonly || args.private %}
         <div>
-            <label for="privacy">{{ text.privacy }} <sup> <a href="{{ args.public_path_as_str() }}/guide#privacy">?</a></sup></label><br>
+            <label for="privacy">{{ text.privacy }} <sup> <a
+                        href="{{ args.public_path_as_str() }}/guide#privacy">?</a></sup></label><br>
             <select style="width: 100%;" name="privacy" id="privacy">
                 <optgroup label="Unencrypted (no password)">
                     <option value="public">{{ text.privacy_public }}</option>
@@ -172,12 +176,17 @@
 
         {% if args.encryption_client_side || args.encryption_server_side || args.enable_readonly %}
         <div>
-            <label for="password_field">{{ text.password }} <sup><a href="{{ args.public_path_as_str() }}/guide#password">?</a></sup></label><br>
+            <label for="password_field">{{ text.password }} <sup><a
+                        href="{{ args.public_path_as_str() }}/guide#password">?</a></sup></label><br>
             <input style="width: 130px; height: 28px;" type="password" id="password_field" autocomplete="off" />
         </div>
         {%- endif %}
 
     </div>
+
+    <label>{{ text.title_label }}</label>
+    <input style="width: 100%; height: 32px; margin-bottom: 1em; font-family: inherit;" type="text" id="title-input"
+        name="title" placeholder="{{ text.title_placeholder }}" />
 
     <label>{{ text.content_label }}</label>
     <textarea style="width: 100%; min-height: 100px; margin-bottom: 2em; font-family: monospace;" id="content-input"
@@ -185,7 +194,8 @@
     <div>
         {% if !args.no_file_upload %}
         <div id="file-select">
-            <label for="file" id="attach-file-button-label"><a role="button" id="attach-file-button">{{ text.select_file }}</a></label>
+            <label for="file" id="attach-file-button-label"><a role="button" id="attach-file-button">{{ text.select_file
+                    }}</a></label>
             <br>
             <input type="file" id="file" name="file" />
         </div>

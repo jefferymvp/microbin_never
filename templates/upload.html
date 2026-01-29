@@ -1,4 +1,9 @@
 {% include "header.html" %}
+
+{% if pasta.title != "" %}
+<h2 style="margin-bottom: 0.5rem;">{{ pasta.title }}</h2>
+{% endif %}
+
 <div style="float: left">
   {% if pasta.content != "" %}
   <button id="copy-text-button" class="small-button" style="margin-right:

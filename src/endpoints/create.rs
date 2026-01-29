@@ -101,6 +101,7 @@ pub async fn create(
 
     let mut new_pasta = Pasta {
         id: rand::thread_rng().gen::<u16>() as u64,
+        title: String::from(""),
         content: String::from(""),
         file: None,
         extension: String::from(""),
@@ -223,6 +224,13 @@ pub async fn create(
                 }
                 continue;
             }
+            "title" => {
+                while let Some(chunk) = field.try_next().await? {
+                    let title = std::str::from_utf8(&chunk).unwrap().to_string();
+                    new_pasta.title = title.trim().to_string();
+                }
+                continue;
+            }
             "file" => {
                 if ARGS.no_file_upload {
                     continue;
@@ -317,6 +325,11 @@ pub async fn create(
         } else {
             encrypt_file(&plain_key, &filepath).expect("Failed to encrypt file with plain key")
         }
+    }
+
+    // Generate default title if not provided
+    if new_pasta.title.is_empty() {
+        new_pasta.title = format!("Pasta {}", new_pasta.id_as_animals());
     }
 
     let encrypt_server = new_pasta.encrypt_server;

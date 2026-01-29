@@ -242,6 +242,7 @@ pub async fn post_submit_edit_private(
 
     let mut password = String::from("");
     let mut new_content = String::from("");
+    let mut new_title = String::from("");
 
     while let Some(mut field) = payload.try_next().await? {
         if field.name() == Some("content") {
@@ -252,6 +253,11 @@ pub async fn post_submit_edit_private(
             if !buf.is_empty() {
                 new_content = String::from_utf8(buf.to_vec())
                     .map_err(|_| ErrorBadRequest("Invalid UTF-8 in content"))?;
+            }
+        }
+        if field.name() == Some("title") {
+            while let Some(chunk) = field.try_next().await? {
+                new_title = std::str::from_utf8(&chunk).unwrap().to_string();
             }
         }
         if field.name() == Some("password") {
@@ -296,6 +302,10 @@ pub async fn post_submit_edit_private(
                 pastas[index]
                     .content
                     .replace_range(.., &encrypt(&new_content, &password));
+                // Update title if provided
+                if !new_title.is_empty() {
+                    pastas[index].title = new_title.clone();
+                }
                 // save pasta in database
                 update(Some(&pastas), Some(&pastas[index]));
             } else {
@@ -346,6 +356,7 @@ pub async fn post_edit(
     remove_expired(&mut pastas);
 
     let mut new_content = String::from("");
+    let mut new_title = String::from("");
     let mut password = String::from("");
 
     while let Some(mut field) = payload.try_next().await? {
@@ -357,6 +368,11 @@ pub async fn post_edit(
             if !buf.is_empty() {
                 new_content = String::from_utf8(buf.to_vec())
                     .map_err(|_| ErrorBadRequest("Invalid UTF-8 in content"))?;
+            }
+        }
+        if field.name() == Some("title") {
+            while let Some(chunk) = field.try_next().await? {
+                new_title = std::str::from_utf8(&chunk).unwrap().to_string();
             }
         }
         if field.name() == Some("password") {
@@ -396,6 +412,11 @@ pub async fn post_edit(
                     pastas[i].content.replace_range(.., &new_content);
                     // save pasta in database
                     update(Some(&pastas), Some(&pastas[i]));
+                }
+
+                // Update title if provided
+                if !new_title.is_empty() {
+                    pastas[i].title = new_title;
                 }
 
                 return Ok(HttpResponse::Found()
